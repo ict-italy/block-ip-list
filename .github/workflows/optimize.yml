@@ -11,8 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      # Разрешаем токену читать переменные репозитория
-      actions: read 
 
     steps:
       - name: Checkout repository
@@ -23,16 +21,9 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Fetch Whitelist Securely
-        env:
-          # Встроенный токен авторизации
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Скачиваем значение переменной MY_WHITELIST через API и прячем во временный файл.
-          # Если переменная не создана, команда не сломает пайплайн (создаст пустой файл).
-          gh api /repos/${{ github.repository }}/actions/variables/MY_WHITELIST --jq '.value' > my_whitelist.tmp || touch my_whitelist.tmp
-
       - name: Run Optimization Script
+        env:
+          WHITELIST_URL: ${{ secrets.WHITELIST_URL }}
         run: python optimize.py
 
       - name: Commit and Push changes
@@ -42,7 +33,7 @@ jobs:
           git add blocklist.txt
           
           if ! git diff --staged --quiet; then
-            git commit -m "Auto-optimize blocklist (dedup, aggregate, whitelist)"
+            git commit -m "Auto-optimize blocklist (dedup, aggregate, apply Gist whitelist)"
             git push
           else
             echo "No optimization needed."
