@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      # Разрешаем токену читать переменные репозитория
+      actions: read 
 
     steps:
       - name: Checkout repository
@@ -21,10 +23,16 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Run Optimization Script
-        # Передаем переменную MY_WHITELIST из GitHub Variables в скрипт
+      - name: Fetch Whitelist Securely
         env:
-          MY_WHITELIST: ${{ vars.MY_WHITELIST }}
+          # Встроенный токен авторизации
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Скачиваем значение переменной MY_WHITELIST через API и прячем во временный файл.
+          # Если переменная не создана, команда не сломает пайплайн (создаст пустой файл).
+          gh api /repos/${{ github.repository }}/actions/variables/MY_WHITELIST --jq '.value' > my_whitelist.tmp || touch my_whitelist.tmp
+
+      - name: Run Optimization Script
         run: python optimize.py
 
       - name: Commit and Push changes
