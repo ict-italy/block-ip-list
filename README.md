@@ -14,9 +14,8 @@ Configures the FortiGate to periodically pull the IP list from GitHub.
 ```fortios
 config system external-resource
     edit "GitHub-IP-Blocklist"
-        set type ip
-        set resource "[https://raw.githubusercontent.com/ict-italy/block-ip-list/main/blocklist.txt](https://raw.githubusercontent.com/ict-italy/block-ip-list/main/blocklist.txt)"
-        set refresh-rate 5
+        set type address
+        set resource "https://raw.githubusercontent.com/ict-italy/block-ip-list/main/blocklist.txt"
     next
 end
 ```
@@ -33,9 +32,9 @@ config firewall local-in-policy
         set intf "any"
         set srcaddr "GitHub-IP-Blocklist"
         set dstaddr "all"
+        set action deny
         set service "ALL"
         set schedule "always"
-        set comments "Drop scans and connection attempts to FortiGate itself"
     next
 end
 ```
@@ -50,15 +49,14 @@ Blocks connections from listed IPs attempting to reach internal subnets or Virtu
 config firewall policy
     edit 0
         set name "Block-List Drop"
+        set uuid cbf90fa4-9a1c-51f1-9e28-5c5e3430bdb1
         set srcintf "any"
         set dstintf "any"
         set srcaddr "GitHub-IP-Blocklist"
         set dstaddr "all"
-        set action deny
         set schedule "always"
         set service "ALL"
         set logtraffic all
-        set comments "Deny transit traffic from external blocklist"
     next
 end
 ```
@@ -66,21 +64,3 @@ end
 
 ---
 
-## Verification & Troubleshooting
-
-Check if the connector successfully downloaded and parsed the addresses:
-
-```fortios
-# View dynamic entries resolved from the GitHub feed
-diagnose firewall dynamic-address "GitHub-IP-Blocklist"
-
-# Check external connector update status
-diagnose test update info
-```
-
-Inspect packet drop counters on the Local-In policy:
-
-```fortios
-# Show local-in drop statistics (ID group 00100004)
-diagnose firewall iprope show 00100004 <policy_id>
-```
