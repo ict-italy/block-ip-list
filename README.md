@@ -49,7 +49,6 @@ Blocks connections from listed IPs attempting to reach internal subnets or Virtu
 config firewall policy
     edit 0
         set name "Block-List Drop"
-        set uuid cbf90fa4-9a1c-51f1-9e28-5c5e3430bdb1
         set srcintf "any"
         set dstintf "any"
         set srcaddr "GitHub-IP-Blocklist"
