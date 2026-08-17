@@ -4,13 +4,13 @@ on:
   push:
     paths:
       - 'blocklist.txt'
-  workflow_dispatch: # Позволяет запускать Action вручную из веб-интерфейса
+  workflow_dispatch:
 
 jobs:
   aggregate-ips:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Необходимо для коммита обратно в репо
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -22,6 +22,9 @@ jobs:
           python-version: '3.x'
 
       - name: Run Optimization Script
+        # Передаем переменную MY_WHITELIST из GitHub Variables в скрипт
+        env:
+          MY_WHITELIST: ${{ vars.MY_WHITELIST }}
         run: python optimize.py
 
       - name: Commit and Push changes
@@ -30,10 +33,9 @@ jobs:
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add blocklist.txt
           
-          # Проверяем, изменился ли файл после скрипта. Если да — коммитим
           if ! git diff --staged --quiet; then
-            git commit -m "Auto-optimize blocklist (dedup & aggregate CIDRs)"
+            git commit -m "Auto-optimize blocklist (dedup, aggregate, whitelist)"
             git push
           else
-            echo "No optimization needed. List is already optimal."
+            echo "No optimization needed."
           fi
