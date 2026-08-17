@@ -3,18 +3,23 @@ import sys
 import os
 
 filename = 'blocklist.txt'
-# Получаем белый список из переменных окружения (через GitHub Actions)
-whitelist_env = os.getenv('MY_WHITELIST', '')
+whitelist_file = 'my_whitelist.tmp'
 
-# Парсим белый список
 whitelist_nets = []
-for w_line in whitelist_env.splitlines():
-    w_line = w_line.strip()
-    if w_line:
-        try:
-            whitelist_nets.append(ipaddress.ip_network(w_line, strict=False))
-        except ValueError:
-            print(f"Warning: Invalid whitelist IP format: {w_line}")
+
+# Считываем белый список из временного файла
+if os.path.exists(whitelist_file):
+    with open(whitelist_file, 'r') as wf:
+        for w_line in wf:
+            w_line = w_line.strip()
+            if w_line:
+                try:
+                    whitelist_nets.append(ipaddress.ip_network(w_line, strict=False))
+                except ValueError:
+                    print(f"Warning: Invalid whitelist IP format: {w_line}")
+    
+    # Заметаем следы: удаляем файл с вашими IP, чтобы он не ушел в публичный репозиторий
+    os.remove(whitelist_file)
 
 try:
     with open(filename, 'r') as f:
@@ -38,12 +43,12 @@ for line in lines:
             print(f"Skipped restricted/private IP: {line}")
             continue
             
-        # 2. Защита ВАШИХ адресов (проверка на пересечение)
+        # 2. Защита ВАШИХ адресов
         is_whitelisted = False
         for w_net in whitelist_nets:
-            # Если адрес из блеклиста пересекается с вашим белым списком (overlaps)
             if net.overlaps(w_net):
-                print(f"Skipped {line} -> Overlaps with your whitelist ({w_net})!")
+                # В логе Actions будет просто сказано, что IP пропущен, без указания из-за какого именно адреса
+                print(f"Skipped {line} -> Overlaps with your whitelist!")
                 is_whitelisted = True
                 break
                 
@@ -54,7 +59,6 @@ for line in lines:
     except ValueError:
         print(f"Invalid IP format skipped: {line}")
 
-# Агрегация (слияние мелких подсетей, удаление дублей) и сортировка
 optimized_ips = list(ipaddress.collapse_addresses(raw_ips))
 
 with open(filename, 'w') as f:
