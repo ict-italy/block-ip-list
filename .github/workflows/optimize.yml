@@ -1,0 +1,39 @@
+name: Optimize IP Blocklist
+
+on:
+  push:
+    paths:
+      - 'blocklist.txt'
+  workflow_dispatch: # Позволяет запускать Action вручную из веб-интерфейса
+
+jobs:
+  aggregate-ips:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Необходимо для коммита обратно в репо
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Run Optimization Script
+        run: python optimize.py
+
+      - name: Commit and Push changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add blocklist.txt
+          
+          # Проверяем, изменился ли файл после скрипта. Если да — коммитим
+          if ! git diff --staged --quiet; then
+            git commit -m "Auto-optimize blocklist (dedup & aggregate CIDRs)"
+            git push
+          else
+            echo "No optimization needed. List is already optimal."
+          fi
