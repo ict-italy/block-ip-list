@@ -12,7 +12,6 @@ whitelist_nets = []
 # 1. Скачиваем белый список из Secret Gist напрямую в память
 if whitelist_url:
     try:
-        # Добавляем фиктивный User-Agent, чтобы GitHub не отбивал запрос
         req = urllib.request.Request(whitelist_url, headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req) as response:
             whitelist_data = response.read().decode('utf-8')
@@ -24,10 +23,11 @@ if whitelist_url:
                 try:
                     whitelist_nets.append(ipaddress.ip_network(w_line, strict=False))
                 except ValueError:
-                    print(f"Warning: Invalid whitelist IP format in Gist: {w_line}")
+                    # Убрали вывод самого значения w_line, чтобы не светить опечатки из Gist
+                    print("Warning: Invalid IP format found in Gist. Ignored.")
         print("Whitelist loaded securely from Gist.")
-    except urllib.error.URLError as e:
-        print(f"Error downloading whitelist from Gist: {e}")
+    except urllib.error.URLError:
+        print("Error downloading whitelist from Gist.")
 else:
     print("WHITELIST_URL is not set. Proceeding without whitelist.")
 
@@ -40,6 +40,7 @@ except FileNotFoundError:
     sys.exit(1)
 
 raw_ips = []
+whitelisted_count = 0  # Добавляем тихий счетчик
 
 for line in lines:
     line = line.strip()
@@ -49,7 +50,7 @@ for line in lines:
     try:
         net = ipaddress.ip_network(line, strict=False)
         
-        # Защита от блокировки локалок
+        # Защита от блокировки локалок (это публичные адреса, их светить можно)
         if net.is_private or net.is_loopback or net.is_multicast or net == ipaddress.ip_network('0.0.0.0/0'):
             print(f"Skipped restricted/private IP: {line}")
             continue
@@ -58,8 +59,8 @@ for line in lines:
         is_whitelisted = False
         for w_net in whitelist_nets:
             if net.overlaps(w_net):
-                # Логируем только факт пропуска, не светя сам адрес из белого списка
-                print(f"Skipped {line} -> Overlaps with private whitelist!")
+                # Молча увеличиваем счетчик, не печатая сам IP в консоль!
+                whitelisted_count += 1
                 is_whitelisted = True
                 break
                 
@@ -79,3 +80,5 @@ with open(filename, 'w') as f:
         f.write(f"{ip}\n")
 
 print(f"Optimization complete. Optimized entries: {len(optimized_ips)}.")
+if whitelisted_count > 0:
+    print(f"Silently removed {whitelisted_count} entries overlapping with private whitelist.")
