@@ -39,6 +39,7 @@ config firewall local-in-policy
 end
 ```
 > **Note:** In `local-in-policy`, the default action is **DROP/DENY**.
+> https://community.fortinet.com/fortigate-3/technical-tip-use-an-external-connector-ip-address-threat-feed-in-local-in-policy-129651
 
 ---
 
