@@ -18,6 +18,7 @@ config system external-resource
         set resource "https://raw.githubusercontent.com/ict-italy/block-ip-list/main/blocklist.txt"
     next
 end
+
 ```
 > **Note:** `set refresh-rate 5` defines the update interval in minutes (default range: 1–43200).
 
@@ -37,6 +38,7 @@ config firewall local-in-policy
         set schedule "always"
     next
 end
+
 ```
 > **Note:** In `local-in-policy`, the default action is **DROP/DENY**.
 
@@ -60,6 +62,7 @@ config firewall policy
         set logtraffic all
     next
 end
+
 ```
 > **Important:** Move this rule to the top of your policy table to ensure it evaluates before allow rules.
 
