@@ -98,11 +98,13 @@ subnet_counts = Counter(ip.prefixlen for ip in optimized_ips)
 # Popular colors: blue, green, red, yellow, orange, purple, pink, lightgrey.
 # 'success' = bright green, 'critical' = red, 'important' = orange.
 # -------------------------------------------------------------------------
-badges_md = f"![Total Records](https://img.shields.io/badge/Total%20Records-{total_records}-blue)\n\n"
+badges_md = f"![Total Records](https://img.shields.io/badge/Total%20Records-{total_records}-blue) "
 badges_md += f"![Total IPs](https://img.shields.io/badge/Total%20IPs-{total_ips}-success)\n\n"
 
 for prefix, count in sorted(subnet_counts.items()):
-    badges_md += f"![/{prefix}](https://img.shields.io/badge/%2F{prefix}-{count}-orange)\n\n"
+    badges_md += f"![/{prefix}](https://img.shields.io/badge/%2F{prefix}-{count}-orange) "
+
+badges_md += "\n\n"
 
 # Update README.md
 readme_path = 'README.md'
