@@ -81,3 +81,44 @@ with open(filename, 'w') as f:
 print(f"Optimization complete. Optimized entries: {len(optimized_ips)}.")
 if whitelisted_count > 0:
     print(f"Silently removed {whitelisted_count} entries overlapping with private whitelist.")
+
+# --- README BADGES UPDATE ---
+import re
+from collections import Counter
+
+# Calculate statistics
+total_records = len(optimized_ips)
+total_ips = sum(ip.num_addresses for ip in optimized_ips)
+subnet_counts = Counter(ip.prefixlen for ip in optimized_ips)
+
+# Generate badges markdown
+# -------------------------------------------------------------------------
+# COLOR CONFIGURATION:
+# You can change the colors at the end of each URL (e.g., '-blue', '-success').
+# Popular colors: blue, green, red, yellow, orange, purple, pink, lightgrey.
+# 'success' = bright green, 'critical' = red, 'important' = orange.
+# -------------------------------------------------------------------------
+badges_md = f"![Total Records](https://img.shields.io/badge/Total%20Records-{total_records}-blue)\n\n"
+badges_md += f"![Total IPs](https://img.shields.io/badge/Total%20IPs-{total_ips}-success)\n\n"
+
+for prefix, count in sorted(subnet_counts.items()):
+    badges_md += f"![/{prefix}](https://img.shields.io/badge/%2F{prefix}-{count}-orange)\n\n"
+
+# Update README.md
+readme_path = 'README.md'
+try:
+    with open(readme_path, 'r', encoding='utf-8') as f:
+        readme_content = f.read()
+        
+    new_readme_content = re.sub(
+        r'<!-- STATS_START -->.*?<!-- STATS_END -->',
+        f'<!-- STATS_START -->\n{badges_md}<!-- STATS_END -->',
+        readme_content,
+        flags=re.DOTALL
+    )
+
+    with open(readme_path, 'w', encoding='utf-8') as f:
+        f.write(new_readme_content)
+    print("README.md updated with latest statistics badges.")
+except FileNotFoundError:
+    print(f"Warning: {readme_path} not found. Badges not updated.")

@@ -1,3 +1,24 @@
+<!-- STATS_START -->
+![Total Records](https://img.shields.io/badge/Total%20Records-1473-blue)
+
+![Total IPs](https://img.shields.io/badge/Total%20IPs-14056-success)
+
+![/23](https://img.shields.io/badge/%2F23-7-orange)
+
+![/24](https://img.shields.io/badge/%2F24-35-orange)
+
+![/28](https://img.shields.io/badge/%2F28-1-orange)
+
+![/29](https://img.shields.io/badge/%2F29-5-orange)
+
+![/30](https://img.shields.io/badge/%2F30-5-orange)
+
+![/31](https://img.shields.io/badge/%2F31-16-orange)
+
+![/32](https://img.shields.io/badge/%2F32-1404-orange)
+
+<!-- STATS_END -->
+
 # FortiGate Dynamic IP Blocklist (Threat Feed)
 
 This repository maintains a dynamic list of malicious/scanning IP addresses (`blocklist.txt`) that can be automatically synchronized with FortiOS using **External Connectors (Threat Feeds)**.
