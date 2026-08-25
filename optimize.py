@@ -85,6 +85,7 @@ if whitelisted_count > 0:
 # --- README BADGES UPDATE ---
 import re
 from collections import Counter
+import datetime
 
 # Calculate statistics
 total_records = len(optimized_ips)
@@ -98,7 +99,10 @@ subnet_counts = Counter(ip.prefixlen for ip in optimized_ips)
 # Popular colors: blue, green, red, yellow, orange, purple, pink, lightgrey.
 # 'success' = bright green, 'critical' = red, 'important' = orange.
 # -------------------------------------------------------------------------
-badges_md = f"![Total Records](https://img.shields.io/badge/Total%20Records-{total_records}-blue) "
+last_updated_raw = datetime.datetime.now(datetime.timezone.utc).strftime("%Y--%m--%d %H:%M UTC")
+last_updated = last_updated_raw.replace(' ', '%20')
+badges_md = f"![Last Updated](https://img.shields.io/badge/Last%20Updated-{last_updated}-lightgrey) "
+badges_md += f"![Total Records](https://img.shields.io/badge/Total%20Records-{total_records}-blue) "
 badges_md += f"![Total IPs](https://img.shields.io/badge/Total%20IPs-{total_ips}-success)\n\n"
 
 for prefix, count in sorted(subnet_counts.items()):

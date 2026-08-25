@@ -1,5 +1,5 @@
 <!-- STATS_START -->
-![Total Records](https://img.shields.io/badge/Total%20Records-1473-blue) ![Total IPs](https://img.shields.io/badge/Total%20IPs-14056-success)
+![Last Updated](https://img.shields.io/badge/Last%20Updated-2026--08--25%2008:18%20UTC-lightgrey) ![Total Records](https://img.shields.io/badge/Total%20Records-1473-blue) ![Total IPs](https://img.shields.io/badge/Total%20IPs-14056-success)
 
 ![/23](https://img.shields.io/badge/%2F23-7-orange) ![/24](https://img.shields.io/badge/%2F24-35-orange) ![/28](https://img.shields.io/badge/%2F28-1-orange) ![/29](https://img.shields.io/badge/%2F29-5-orange) ![/30](https://img.shields.io/badge/%2F30-5-orange) ![/31](https://img.shields.io/badge/%2F31-16-orange) ![/32](https://img.shields.io/badge/%2F32-1404-orange) 
 
@@ -75,3 +75,18 @@ end
 
 ---
 
+### 4. Verify / Diagnostics
+To verify that your FortiGate is successfully downloading and parsing the blocklist, run the following command in the CLI:
+```fortios
+diagnose sys external-resource show GitHub-IP-Blocklist
+```
+This will display the download status, the number of loaded entries, and the last update timestamp directly on your firewall.
+
+---
+
+## ⚙️ How it works (Under the Hood)
+This repository is fully automated via GitHub Actions to ensure maximum efficiency for your firewall hardware. Upon every update to `blocklist.txt`, a Python script processes the list:
+1. **Deduplication:** Removes any duplicate IP entries.
+2. **Subnet Collapsing:** Aggregates overlapping IPs and subnets (e.g., merging multiple `/24`s into a `/23`) to minimize the total number of routing/policy entries, saving memory on your device.
+3. **Safety Filtering:** Automatically drops private network spaces (RFC 1918) and restricted IPs to prevent accidental lockouts of local networks.
+4. **Private Whitelisting:** Checks entries against a hidden Gist whitelist to ensure critical infrastructure is never blocked.
