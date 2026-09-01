@@ -1,7 +1,7 @@
 <!-- STATS_START -->
-![Last Updated](https://img.shields.io/badge/Last%20Updated-2026--08--27%2009:17%20UTC-lightgrey) ![Total Records](https://img.shields.io/badge/Total%20Records-1643-blue) ![Total IPs](https://img.shields.io/badge/Total%20IPs-14491-success)
+![Last Updated](https://img.shields.io/badge/Last%20Updated-2026--09--01%2005:45%20UTC-lightgrey) ![Total Records](https://img.shields.io/badge/Total%20Records-1644-blue) ![Total IPs](https://img.shields.io/badge/Total%20IPs-14492-success)
 
-![/23](https://img.shields.io/badge/%2F23-7-orange) ![/24](https://img.shields.io/badge/%2F24-36-orange) ![/28](https://img.shields.io/badge/%2F28-1-orange) ![/29](https://img.shields.io/badge/%2F29-5-orange) ![/30](https://img.shields.io/badge/%2F30-6-orange) ![/31](https://img.shields.io/badge/%2F31-23-orange) ![/32](https://img.shields.io/badge/%2F32-1565-orange) 
+![/23](https://img.shields.io/badge/%2F23-7-orange) ![/24](https://img.shields.io/badge/%2F24-36-orange) ![/28](https://img.shields.io/badge/%2F28-1-orange) ![/29](https://img.shields.io/badge/%2F29-5-orange) ![/30](https://img.shields.io/badge/%2F30-6-orange) ![/31](https://img.shields.io/badge/%2F31-23-orange) ![/32](https://img.shields.io/badge/%2F32-1566-orange) 
 
 <!-- STATS_END -->
 
