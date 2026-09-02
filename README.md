@@ -5,7 +5,7 @@
 
 <!-- STATS_END -->
 
-# FortiGate Dynamic IP Blocklist (Threat Feed)
+#1 FortiGate Dynamic IP Blocklist (Threat Feed)
 
 This repository maintains a dynamic list of malicious/scanning IP addresses (`blocklist.txt`) that can be automatically synchronized with FortiOS using **External Connectors (Threat Feeds)**.
 
