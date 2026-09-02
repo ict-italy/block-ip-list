@@ -1,11 +1,11 @@
 <!-- STATS_START -->
-![Last Updated](https://img.shields.io/badge/Last%20Updated-2026--09--01%2015:14%20UTC-lightgrey) ![Total Records](https://img.shields.io/badge/Total%20Records-1812-blue) ![Total IPs](https://img.shields.io/badge/Total%20IPs-14669-success)
+![Last Updated](https://img.shields.io/badge/Last%20Updated-2026--09--02%2010:13%20UTC-lightgrey) ![Total Records](https://img.shields.io/badge/Total%20Records-1812-blue) ![Total IPs](https://img.shields.io/badge/Total%20IPs-14669-success)
 
 ![/23](https://img.shields.io/badge/%2F23-7-orange) ![/24](https://img.shields.io/badge/%2F24-36-orange) ![/28](https://img.shields.io/badge/%2F28-1-orange) ![/29](https://img.shields.io/badge/%2F29-5-orange) ![/30](https://img.shields.io/badge/%2F30-6-orange) ![/31](https://img.shields.io/badge/%2F31-32-orange) ![/32](https://img.shields.io/badge/%2F32-1725-orange) 
 
 <!-- STATS_END -->
 
-#1 FortiGate Dynamic IP Blocklist (Threat Feed)
+# FortiGate Dynamic IP Blocklist (Threat Feed)
 
 This repository maintains a dynamic list of malicious/scanning IP addresses (`blocklist.txt`) that can be automatically synchronized with FortiOS using **External Connectors (Threat Feeds)**.
 
@@ -85,8 +85,9 @@ This will display the download status, the number of loaded entries, and the las
 ---
 
 ## ⚙️ How it works (Under the Hood)
-This repository is fully automated via GitHub Actions to ensure maximum efficiency for your firewall hardware. Upon every update to `blocklist.txt`, a Python script processes the list:
-1. **Deduplication:** Removes any duplicate IP entries.
-2. **Subnet Collapsing:** Aggregates overlapping IPs and subnets (e.g., merging multiple `/24`s into a `/23`) to minimize the total number of routing/policy entries, saving memory on your device.
+This repository is fully automated via GitHub Actions to ensure maximum efficiency for your firewall hardware. Upon every update to either `blocklist.txt` or `blocklist-expanded.txt`, a Python script processes the lists:
+1. **Deduplication:** Removes any duplicate IP entries across both files.
+2. **Subnet Collapsing (`blocklist.txt`):** Aggregates overlapping IPs and subnets (e.g., merging multiple `/24`s into a `/23`) to minimize the total number of routing/policy entries, saving memory on your device.
 3. **Safety Filtering:** Automatically drops private network spaces (RFC 1918) and restricted IPs to prevent accidental lockouts of local networks.
 4. **Private Whitelisting:** Checks entries against a hidden Gist whitelist to ensure critical infrastructure is never blocked.
+5. **Full IP Expansion (`blocklist-expanded.txt`):** For legacy systems or basic firewalls that do not support CIDR notation (subnets), the script automatically generates a second file where every subnet is fully expanded into individual IP addresses (limited to `/16` masks to prevent file size explosion).

@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'blocklist.txt'
+      - 'blocklist-expanded.txt'
   workflow_dispatch:
 
 jobs:
@@ -14,10 +15,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@v5
         with:
           python-version: '3.x'
 
@@ -30,7 +31,7 @@ jobs:
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add blocklist.txt README.md
+          git add blocklist.txt blocklist-expanded.txt README.md
           
           if ! git diff --staged --quiet; then
             git commit -m "Auto-optimize blocklist (dedup, aggregate, apply Gist whitelist)"

@@ -31,11 +31,15 @@ else:
     print("WHITELIST_URL is not set. Proceeding without whitelist.")
 
 
-try:
-    with open(filename, 'r') as f:
-        lines = f.read().splitlines()
-except FileNotFoundError:
-    print(f"File {filename} not found.")
+lines = []
+for fn in ['blocklist.txt', 'blocklist-expanded.txt']:
+    try:
+        with open(fn, 'r') as f:
+            lines.extend(f.read().splitlines())
+    except FileNotFoundError:
+        print(f"File {fn} not found. Proceeding.")
+if not lines:
+    print("No input files found.")
     sys.exit(1)
 
 raw_ips = []
@@ -74,9 +78,18 @@ for line in lines:
 optimized_ips = list(ipaddress.collapse_addresses(raw_ips))
 
 
-with open(filename, 'w') as f:
+with open('blocklist.txt', 'w') as f:
     for ip in optimized_ips:
         f.write(f"{ip}\n")
+
+# --- EXPAND TO SINGLE IPs ---
+with open('blocklist-expanded.txt', 'w') as f:
+    for ip in optimized_ips:
+        if ip.prefixlen < 16:
+            print(f"Warning: Subnet {ip} is too large (/{ip.prefixlen}) to expand. Skipping in expanded list.")
+            continue
+        for addr in ip:
+            f.write(f"{addr}\n")
 
 print(f"Optimization complete. Optimized entries: {len(optimized_ips)}.")
 if whitelisted_count > 0:
